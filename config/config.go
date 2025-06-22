@@ -1,0 +1,79 @@
+package config
+
+import (
+	"fmt"
+
+	"github.com/spf13/viper"
+)
+
+type Config struct {
+	Mode string `mapstructure:"mode"` // prod / test
+
+	Server struct {
+		ListenAddress string `mapstructure:"listen_address"`
+	} `mapstructure:"server"`
+
+	Paths struct {
+		Logs struct {
+			Linux struct {
+				Worker string `mapstructure:"worker"`
+				Runner string `mapstructure:"runner"`
+				Event  string `mapstructure:"event"`
+			} `mapstructure:"linux"`
+
+			Windows struct {
+				Worker string `mapstructure:"worker"`
+				Runner string `mapstructure:"runner"`
+				Event  string `mapstructure:"event"`
+			} `mapstructure:"windows"`
+
+			Mac struct {
+				Worker string `mapstructure:"worker"`
+				Runner string `mapstructure:"runner"`
+				Event  string `mapstructure:"event"`
+			} `mapstructure:"mac"`
+		} `mapstructure:"logs"`
+	} `mapstructure:"paths"`
+
+	Test struct {
+		RunnerPath string `mapstructure:"runner_path"`
+		EventPath  string `mapstructure:"event_path"`
+		WorkerPath string `mapstructure:"worker_path"`
+	} `mapstructure:"test"`
+
+	Runners struct {
+		Names  []string `mapstructure:"names"`
+		Groups []string `mapstructure:"groups"`
+	} `mapstructure:"runners"`
+
+	Metrics struct {
+		EnableRunner bool `mapstructure:"enable_runner"`
+		EnableJob    bool `mapstructure:"enable_job"`
+		EnableEvent  bool `mapstructure:"enable_event"`
+	} `mapstructure:"metrics"`
+}
+
+func Load() (*Config, error) {
+	v := viper.New()
+
+	v.SetConfigName("github-runner") // github-runner.yaml
+	v.SetConfigType("yaml")
+	v.AddConfigPath(".")
+	v.AddConfigPath("/etc/github-runner-exporter/")
+	v.AutomaticEnv()
+
+	// Default fallback values
+	v.SetDefault("server.listen_address", ":9200")
+	v.SetDefault("mode", "prod")
+
+	if err := v.ReadInConfig(); err != nil {
+		return nil, fmt.Errorf("error reading config file: %w", err)
+	}
+
+	var cfg Config
+	if err := v.Unmarshal(&cfg); err != nil {
+		return nil, fmt.Errorf("unable to decode config into struct: %w", err)
+	}
+
+	return &cfg, nil
+}
