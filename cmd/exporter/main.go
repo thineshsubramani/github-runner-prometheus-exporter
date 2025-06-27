@@ -42,6 +42,6 @@ func main() {
 
 	// ✅ Serve metrics
 	handler := promhttp.HandlerFor(exp.Registry, promhttp.HandlerOpts{})
-	log.Printf("🚀 Exporter starting on http://localhost%s/metrics", cfg.Server.ListenAddress)
+	log.Printf("🚀 Exporter starting on http://localhost:%s/metrics", cfg.Server.ListenAddress)
 	server.Start(cfg.Server.ListenAddress, handler)
 }

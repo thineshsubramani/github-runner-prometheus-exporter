@@ -1,22 +1,23 @@
 mode: "prod"  # or "test"
 
 server:
-  listen_address: ":9200"
+  listen_address: "9300"
 
 paths:
   logs:
     linux:
       runner: "/home/thinesh40/actions-runner/_diag/"
-      worker: "/home/thinesh40/development/go/custom_packages/github-runner-prometheus-exporter/test/"
-      event: "/home/thinesh40/development/go/custom_packages/github-runner-exporter/test-data/main-data/event.json"
-    windows:
-      runner: "C:\\github-runner\\_diag\\"
-      worker: "C:\\github-runner\\_diag\\"
-      event: "C:\\_temp\\_github_workflow\\event.json"
-    mac:
-      runner: "/Users/thinesh/actions-runner/_diag/"
-      worker: "/Users/thinesh/actions-runner/_diag/"
-      event: "/Users/thinesh/actions-runner/_temp/_github_workflow/event.json"
+      worker: "/home/thinesh40/development/go/custom_packages/github-runner-prometheus-exporter/test/active/event.json"
+      # event: "/home/thinesh40/development/go/custom_packages/github-runner-exporter/test-data/main-data/event.json"
+      event: "/home/thinesh40/development/go/custom_packages/github-runner-prometheus-exporter/test/active/event.json"
+    # windows:
+    #   runner: "C:\\github-runner\\_diag\\"
+    #   worker: "C:\\github-runner\\_diag\\"
+    #   event: "C:\\_temp\\_github_workflow\\event.json"
+    # mac:
+    #   runner: "/Users/thinesh/actions-runner/_diag/"
+    #   worker: "/Users/thinesh/actions-runner/_diag/"
+    #   event: "/Users/thinesh/actions-runner/_temp/_github_workflow/event.json"
 
 runners:
   names:
@@ -26,7 +27,7 @@ runners:
 
 metrics:
   enable_runner: false
-  enable_job: true
+  enable_job: false
   enable_event: true
 
 test:

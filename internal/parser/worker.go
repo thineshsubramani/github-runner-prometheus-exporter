@@ -250,9 +250,9 @@ func ParseLatestWorkerLog(dir string) (*WorkerTimestamps, error) {
 	}
 
 	duration := endTS.Sub(startTS)
-	log.Printf("✅ Parsed start: %s", startTS.Format(time.RFC3339))
-	log.Printf("✅ Parsed end  : %s", endTS.Format(time.RFC3339))
-	log.Printf("🕒 Duration     : %s", duration)
+	log.Printf(" Parsed start: %s", startTS.Format(time.RFC3339))
+	log.Printf(" Parsed end  : %s", endTS.Format(time.RFC3339))
+	log.Printf(" Duration     : %s", duration)
 
 	runInfo, _ := ExtractJSONFromLog(latestLog)
 	runID := "unknown"
@@ -372,3 +372,5 @@ func ExtractJSONFromLog(logPath string) (*RunJobInfo, error) {
 
 	return info, nil
 }
+
+// TODO: Use for live log parsing line by line
