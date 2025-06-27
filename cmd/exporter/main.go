@@ -21,8 +21,8 @@ func main() {
 
 	// ✅ Fallback to default port if not defined
 	if cfg.Server.ListenAddress == "" {
-		cfg.Server.ListenAddress = ":9200"
-		log.Println("⚠️  No listen_address in config, using default :9200")
+		cfg.Server.ListenAddress = "9200"
+		log.Println("No listen_address in config, using default 9200")
 	}
 
 	// // ✅ Path validation (Linux as default — extend for OS later)
@@ -43,5 +43,5 @@ func main() {
 	// ✅ Serve metrics
 	handler := promhttp.HandlerFor(exp.Registry, promhttp.HandlerOpts{})
 	log.Printf("🚀 Exporter starting on http://localhost:%s/metrics", cfg.Server.ListenAddress)
-	server.Start(cfg.Server.ListenAddress, handler)
+	server.Start(":"+cfg.Server.ListenAddress, handler)
 }
