@@ -2,7 +2,6 @@
 package collector
 
 import (
-	"os"
 	"runtime"
 	"strings"
 
@@ -21,21 +20,16 @@ type InfoCollector struct {
 }
 
 func NewInfoCollector(cfg *config.Config) prometheus.Collector {
-	hostname, err := os.Hostname()
-	if err != nil {
-		hostname = "unknown"
-	}
 
 	return &InfoCollector{
 		mode:        cfg.Mode,
 		runnerNames: cfg.Runners.Names,
 		groupNames:  cfg.Runners.Groups,
-		hostname:    hostname,
 		os:          runtime.GOOS,
 		infoDesc: prometheus.NewDesc(
 			"github_runner_static_info",
-			"Static config info: mode, runners, groups, hostname, os",
-			[]string{"mode", "runner_names", "group_names", "hostname", "os"},
+			"Static config info: mode, runners, groups, os",
+			[]string{"mode", "runner_names", "group_names", "os"},
 			nil,
 		),
 	}
@@ -53,7 +47,6 @@ func (c *InfoCollector) Collect(ch chan<- prometheus.Metric) {
 		c.mode,
 		strings.Join(c.runnerNames, ","),
 		strings.Join(c.groupNames, ","),
-		c.hostname,
 		c.os,
 	)
 }

@@ -1,6 +1,9 @@
 package exporter
 
 import (
+	"os"
+	"runtime"
+
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/collectors"
 
@@ -15,13 +18,23 @@ type Exporter struct {
 func New(cfg *config.Config) *Exporter {
 	reg := prometheus.NewRegistry()
 
+	hostname, _ := os.Hostname()
+	wrappedReg := prometheus.WrapRegistererWith(
+		prometheus.Labels{"hostname": hostname, "os": runtime.GOOS},
+		reg,
+	)
+
+	runner_name := cfg.Runners.Names[0]
+	group_name := cfg.Runners.Groups[0]
+	runnerWrappedReg := prometheus.WrapRegistererWith(
+		prometheus.Labels{"runner_name": runner_name, "runner_group": group_name},
+		wrappedReg,
+	)
 	// reg.MustRegister(collectors.NewGoCollector())
-	reg.MustRegister(collectors.NewProcessCollector(collectors.ProcessCollectorOpts{}))
 
-	// Register static info
-	reg.MustRegister(collector.NewInfoCollector(cfg))
-	reg.MustRegister(collector.NewDiskCollector())
-
+	wrappedReg.MustRegister(collectors.NewProcessCollector(collectors.ProcessCollectorOpts{}))
+	// wrappedReg.MustRegister(collector.NewInfoCollector(cfg))
+	wrappedReg.MustRegister(collector.NewDiskCollector())
 	// Custom collectors
 	// if cfg.Metrics.EnableRunner {
 	// 	reg.MustRegister(collector.NewRunnerCollector(cfg.Paths.Logs.Linux.Worker)) // OS switch handled later
@@ -30,7 +43,7 @@ func New(cfg *config.Config) *Exporter {
 	// 	reg.MustRegister(collector.NewJobCollector(cfg.Paths.Logs.Linux.Worker))
 	// }
 	if cfg.Metrics.EnableEvent {
-		reg.MustRegister(collector.NewEventCollector(cfg))
+		runnerWrappedReg.MustRegister(collector.NewEventCollector(cfg))
 	}
 
 	return &Exporter{Registry: reg}
