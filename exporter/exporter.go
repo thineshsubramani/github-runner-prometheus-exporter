@@ -2,13 +2,13 @@ package exporter
 
 import (
 	"os"
-	"runtime"
 
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/collectors"
 
 	"github.com/thineshsubramani/github-runner-prometheus-exporter/collector"
 	"github.com/thineshsubramani/github-runner-prometheus-exporter/config"
+	"github.com/thineshsubramani/github-runner-prometheus-exporter/internal/platform"
 )
 
 type Exporter struct {
@@ -20,7 +20,7 @@ func New(cfg *config.Config) *Exporter {
 
 	hostname, _ := os.Hostname()
 	wrappedReg := prometheus.WrapRegistererWith(
-		prometheus.Labels{"hostname": hostname, "os": runtime.GOOS},
+		prometheus.Labels{"hostname": hostname, "os": platform.GetOS()},
 		reg,
 	)
 
