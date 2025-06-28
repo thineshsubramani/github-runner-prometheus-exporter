@@ -92,7 +92,7 @@
 // 	log.Printf("✅ Parsed end  : %s", endTS.Format(time.RFC3339))
 // 	log.Printf("🕒 Duration     : %s", duration)
 
-// 	runInfo, _ := ExtractRunAndJobIDFromLog(latestLog)
+// 	runInfo, _ := ExtractRunAndWorkerIDFromLog(latestLog)
 // 	runID := "unknown"
 // 	if runInfo != nil && runInfo.RunID != "" {
 // 		runID = runInfo.RunID
@@ -108,7 +108,7 @@
 // 	}, nil
 // }
 
-// type RunJobInfo struct {
+// type RunWorkerInfo struct {
 // 	RunID string `json:"run_id"`
 // }
 
@@ -117,7 +117,7 @@
 // 	V string `json:"v"`
 // }
 
-// func ExtractRunAndJobIDFromLog(logPath string) (*RunJobInfo, error) {
+// func ExtractRunAndWorkerIDFromLog(logPath string) (*RunWorkerInfo, error) {
 // 	file, err := os.Open(logPath)
 // 	if err != nil {
 // 		return nil, fmt.Errorf("failed to open log file: %w", err)
@@ -138,7 +138,7 @@
 // 				}
 // 				// Strip quotes and comma if exists
 // 				value := strings.Trim(parts[1], `" ,`)
-// 				return &RunJobInfo{RunID: value}, nil
+// 				return &RunWorkerInfo{RunID: value}, nil
 // 			}
 // 		}
 
@@ -282,7 +282,7 @@ func ParseLatestWorkerLog(dir string) (*WorkerTimestamps, error) {
 	}, nil
 }
 
-type RunJobInfo struct {
+type RunWorkerInfo struct {
 	RunID           string `json:"run_id"`
 	Slug            string `json:"slug"`
 	Repository      string `json:"repository"`
@@ -290,7 +290,7 @@ type RunJobInfo struct {
 	Workflow        string `json:"workflow"`
 }
 
-func ExtractJSONFromLog(logPath string) (*RunJobInfo, error) {
+func ExtractJSONFromLog(logPath string) (*RunWorkerInfo, error) {
 	file, err := os.Open(logPath)
 	if err != nil {
 		return nil, fmt.Errorf("failed to open log file: %w", err)
@@ -299,7 +299,7 @@ func ExtractJSONFromLog(logPath string) (*RunJobInfo, error) {
 
 	scanner := bufio.NewScanner(file)
 	var currentKey string
-	info := &RunJobInfo{}
+	info := &RunWorkerInfo{}
 
 	for scanner.Scan() {
 		line := strings.TrimSpace(scanner.Text())

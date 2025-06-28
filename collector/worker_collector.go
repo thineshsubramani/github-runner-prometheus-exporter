@@ -8,15 +8,15 @@
 // 	"github.com/thineshsubramani/github-runner-prometheus-exporter/internal/parser"
 // )
 
-// type JobCollector struct {
+// type WorkerCollector struct {
 // 	logPath         string
 // 	workflowStart   *prometheus.GaugeVec
 // 	workflowEnd     *prometheus.GaugeVec
 // 	workflowRuntime *prometheus.GaugeVec
 // }
 
-// func NewJobCollector(path string) *JobCollector {
-// 	return &JobCollector{
+// func NewWorkerCollector(path string) *WorkerCollector {
+// 	return &WorkerCollector{
 // 		logPath: path,
 // 		workflowStart: prometheus.NewGaugeVec(prometheus.GaugeOpts{
 // 			Name: "github_workflow_start_timestamp_seconds",
@@ -35,15 +35,15 @@
 // 	}
 // }
 
-// func (c *JobCollector) Describe(ch chan<- *prometheus.Desc) {
+// func (c *WorkerCollector) Describe(ch chan<- *prometheus.Desc) {
 // 	c.workflowStart.Describe(ch)
 // 	c.workflowEnd.Describe(ch)
 // 	c.workflowRuntime.Describe(ch)
 // }
 
-// func (c *JobCollector) Collect(ch chan<- prometheus.Metric) {
-// 	job, err := parser.ParseLatestWorkerLog(c.logPath)
-// 	if err != nil || job == nil {
+// func (c *WorkerCollector) Collect(ch chan<- prometheus.Metric) {
+// 	Worker, err := parser.ParseLatestWorkerLog(c.logPath)
+// 	if err != nil || Worker == nil {
 // 		log.Printf("⚠️  Worker log not found or parse failed: %v", err)
 
 // 		// Emit idle placeholders with static "none" log label
@@ -59,20 +59,20 @@
 // 		return
 // 	}
 
-// 	logLabel := job.LogFile
+// 	logLabel := Worker.LogFile
 
-// 	runInfo, err := parser.ExtractRunAndJobIDFromLog(filepath.Join(c.logPath, logLabel))
+// 	runInfo, err := parser.ExtractRunAndWorkerIDFromLog(filepath.Join(c.logPath, logLabel))
 // 	if err != nil {
 // 		log.Printf("⚠️  Failed to extract RunId: %v", err)
-// 		runInfo = &parser.RunJobInfo{RunID: "unknown"}
+// 		runInfo = &parser.RunWorkerInfo{RunID: "unknown"}
 // 	}
 
 // 	runID := runInfo.RunID
 // 	labels := []string{logLabel, runID}
 
-// 	c.workflowStart.WithLabelValues(labels...).Set(float64(job.StartTime.Unix()))
-// 	c.workflowEnd.WithLabelValues(labels...).Set(float64(job.EndTime.Unix()))
-// 	c.workflowRuntime.WithLabelValues(labels...).Set(job.TotalRuntime.Seconds())
+// 	c.workflowStart.WithLabelValues(labels...).Set(float64(Worker.StartTime.Unix()))
+// 	c.workflowEnd.WithLabelValues(labels...).Set(float64(Worker.EndTime.Unix()))
+// 	c.workflowRuntime.WithLabelValues(labels...).Set(Worker.TotalRuntime.Seconds())
 
 //		c.workflowStart.Collect(ch)
 //		c.workflowEnd.Collect(ch)
@@ -89,14 +89,14 @@
 // 	"github.com/thineshsubramani/github-runner-prometheus-exporter/internal/parser"
 // )
 
-// type JobCollector struct {
+// type WorkerCollector struct {
 // 	logPath         string
 // 	workflowStart   *prometheus.GaugeVec
 // 	workflowEnd     *prometheus.GaugeVec
 // 	workflowRuntime *prometheus.GaugeVec
 // }
 
-// func NewJobCollector(path string) *JobCollector {
+// func NewWorkerCollector(path string) *WorkerCollector {
 // 	labelKeys := []string{
 // 		"log_file",
 // 		"run_id",
@@ -106,7 +106,7 @@
 // 		"workflow",
 // 	}
 
-// 	return &JobCollector{
+// 	return &WorkerCollector{
 // 		logPath: path,
 // 		workflowStart: prometheus.NewGaugeVec(prometheus.GaugeOpts{
 // 			Name: "github_workflow_start_timestamp_seconds",
@@ -125,36 +125,36 @@
 // 	}
 // }
 
-// func (c *JobCollector) Describe(ch chan<- *prometheus.Desc) {
+// func (c *WorkerCollector) Describe(ch chan<- *prometheus.Desc) {
 // 	c.workflowStart.Describe(ch)
 // 	c.workflowEnd.Describe(ch)
 // 	c.workflowRuntime.Describe(ch)
 // }
 
-// func (c *JobCollector) Collect(ch chan<- prometheus.Metric) {
-// 	job, err := parser.ParseLatestWorkerLog(c.logPath)
-// 	if err != nil || job == nil || job.RunID == "" {
-// 		log.Printf("⚠️  Failed to parse job or missing run_id: %v", err)
+// func (c *WorkerCollector) Collect(ch chan<- prometheus.Metric) {
+// 	Worker, err := parser.ParseLatestWorkerLog(c.logPath)
+// 	if err != nil || Worker == nil || Worker.RunID == "" {
+// 		log.Printf("⚠️  Failed to parse Worker or missing run_id: %v", err)
 // 		return
 // 	}
 
 // 	labels := []string{
-// 		defaultIfEmpty(job.LogFile),
-// 		defaultIfEmpty(job.RunID),
-// 		defaultIfEmpty(job.Slug),
-// 		defaultIfEmpty(job.Repo),
-// 		defaultIfEmpty(job.Owner),
-// 		defaultIfEmpty(job.Workflow),
+// 		defaultIfEmpty(Worker.LogFile),
+// 		defaultIfEmpty(Worker.RunID),
+// 		defaultIfEmpty(Worker.Slug),
+// 		defaultIfEmpty(Worker.Repo),
+// 		defaultIfEmpty(Worker.Owner),
+// 		defaultIfEmpty(Worker.Workflow),
 // 	}
 
 // 	log.Printf("📌 Labels: %#v", labels)
-// 	log.Printf("✅ StartTime: %v (%d)", job.StartTime, job.StartTime.Unix())
-// 	log.Printf("✅ EndTime  : %v (%d)", job.EndTime, job.EndTime.Unix())
-// 	log.Printf("✅ Duration : %v (%.0f seconds)", job.TotalRuntime, job.TotalRuntime.Seconds())
+// 	log.Printf("✅ StartTime: %v (%d)", Worker.StartTime, Worker.StartTime.Unix())
+// 	log.Printf("✅ EndTime  : %v (%d)", Worker.EndTime, Worker.EndTime.Unix())
+// 	log.Printf("✅ Duration : %v (%.0f seconds)", Worker.TotalRuntime, Worker.TotalRuntime.Seconds())
 
-// 	c.workflowStart.WithLabelValues(labels...).Set(float64(job.StartTime.Unix()))
-// 	c.workflowEnd.WithLabelValues(labels...).Set(float64(job.EndTime.Unix()))
-// 	c.workflowRuntime.WithLabelValues(labels...).Set(job.TotalRuntime.Seconds())
+// 	c.workflowStart.WithLabelValues(labels...).Set(float64(Worker.StartTime.Unix()))
+// 	c.workflowEnd.WithLabelValues(labels...).Set(float64(Worker.EndTime.Unix()))
+// 	c.workflowRuntime.WithLabelValues(labels...).Set(Worker.TotalRuntime.Seconds())
 
 // 	c.workflowStart.Collect(ch)
 // 	c.workflowEnd.Collect(ch)
@@ -179,7 +179,7 @@ import (
 	"github.com/thineshsubramani/github-runner-prometheus-exporter/internal/watcher"
 )
 
-type JobCollector struct {
+type WorkerCollector struct {
 	logPath         string
 	workflowStart   *prometheus.GaugeVec
 	workflowEnd     *prometheus.GaugeVec
@@ -187,7 +187,7 @@ type JobCollector struct {
 	runnerState     *prometheus.GaugeVec
 }
 
-func NewJobCollector(path string) *JobCollector {
+func NewWorkerCollector(path string) *WorkerCollector {
 	labelKeys := []string{
 		"log_file",
 		"run_id",
@@ -197,7 +197,7 @@ func NewJobCollector(path string) *JobCollector {
 		"workflow",
 	}
 
-	c := &JobCollector{
+	c := &WorkerCollector{
 		logPath: path,
 		workflowStart: prometheus.NewGaugeVec(prometheus.GaugeOpts{
 			Name: "github_workflow_start_timestamp_seconds",
@@ -240,37 +240,37 @@ func NewJobCollector(path string) *JobCollector {
 	return c
 }
 
-func (c *JobCollector) Describe(ch chan<- *prometheus.Desc) {
+func (c *WorkerCollector) Describe(ch chan<- *prometheus.Desc) {
 	c.workflowStart.Describe(ch)
 	c.workflowEnd.Describe(ch)
 	c.workflowRuntime.Describe(ch)
 	c.runnerState.Describe(ch)
 }
 
-func (c *JobCollector) Collect(ch chan<- prometheus.Metric) {
-	job, err := parser.ParseLatestWorkerLog(c.logPath)
-	if err != nil || job == nil || job.RunID == "" {
-		log.Printf("Failed to parse job or missing run_id: %v", err)
+func (c *WorkerCollector) Collect(ch chan<- prometheus.Metric) {
+	Worker, err := parser.ParseLatestWorkerLog(c.logPath)
+	if err != nil || Worker == nil || Worker.RunID == "" {
+		log.Printf("Failed to parse Worker or missing run_id: %v", err)
 		return
 	}
 
 	labels := []string{
-		defaultIfEmpty(job.LogFile),
-		defaultIfEmpty(job.RunID),
-		defaultIfEmpty(job.Slug),
-		defaultIfEmpty(job.Repo),
-		defaultIfEmpty(job.Owner),
-		defaultIfEmpty(job.Workflow),
+		defaultIfEmpty(Worker.LogFile),
+		defaultIfEmpty(Worker.RunID),
+		defaultIfEmpty(Worker.Slug),
+		defaultIfEmpty(Worker.Repo),
+		defaultIfEmpty(Worker.Owner),
+		defaultIfEmpty(Worker.Workflow),
 	}
 
 	log.Printf("Labels: %#v", labels)
-	log.Printf("StartTime: %v (%d)", job.StartTime, job.StartTime.Unix())
-	log.Printf("EndTime  : %v (%d)", job.EndTime, job.EndTime.Unix())
-	log.Printf("Duration : %v (%.0f seconds)", job.TotalRuntime, job.TotalRuntime.Seconds())
+	log.Printf("StartTime: %v (%d)", Worker.StartTime, Worker.StartTime.Unix())
+	log.Printf("EndTime  : %v (%d)", Worker.EndTime, Worker.EndTime.Unix())
+	log.Printf("Duration : %v (%.0f seconds)", Worker.TotalRuntime, Worker.TotalRuntime.Seconds())
 
-	c.workflowStart.WithLabelValues(labels...).Set(float64(job.StartTime.Unix()))
-	c.workflowEnd.WithLabelValues(labels...).Set(float64(job.EndTime.Unix()))
-	c.workflowRuntime.WithLabelValues(labels...).Set(job.TotalRuntime.Seconds())
+	c.workflowStart.WithLabelValues(labels...).Set(float64(Worker.StartTime.Unix()))
+	c.workflowEnd.WithLabelValues(labels...).Set(float64(Worker.EndTime.Unix()))
+	c.workflowRuntime.WithLabelValues(labels...).Set(Worker.TotalRuntime.Seconds())
 
 	c.workflowStart.Collect(ch)
 	c.workflowEnd.Collect(ch)
