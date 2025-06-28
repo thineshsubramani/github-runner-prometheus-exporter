@@ -24,8 +24,8 @@ func New(cfg *config.Config) *Exporter {
 		reg,
 	)
 
-	runner_name := cfg.Runners.Names[0]
-	group_name := cfg.Runners.Groups[0]
+	runner_name := cfg.Runners[0].Name
+	group_name := cfg.Runners[0].Group
 	runnerWrappedReg := prometheus.WrapRegistererWith(
 		prometheus.Labels{"runner_name": runner_name, "runner_group": group_name},
 		wrappedReg,
@@ -42,7 +42,7 @@ func New(cfg *config.Config) *Exporter {
 	// if cfg.Metrics.EnableJob {
 	// 	reg.MustRegister(collector.NewJobCollector(cfg.Paths.Logs.Linux.Worker))
 	// }
-	if cfg.Metrics.EnableEvent {
+	if cfg.Runners[0].Metrics.EnableEvent {
 		runnerWrappedReg.MustRegister(collector.NewEventCollector(cfg))
 	}
 

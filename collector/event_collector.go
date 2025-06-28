@@ -1,15 +1,16 @@
 package collector
 
 import (
+	"fmt"
 	"log"
 	"os"
 	"path/filepath"
-	"runtime"
 	"sync"
 
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/thineshsubramani/github-runner-prometheus-exporter/config"
 	"github.com/thineshsubramani/github-runner-prometheus-exporter/internal/parser"
+	"github.com/thineshsubramani/github-runner-prometheus-exporter/internal/platform"
 	"github.com/thineshsubramani/github-runner-prometheus-exporter/internal/watcher"
 )
 
@@ -27,19 +28,8 @@ type EventCollector struct {
 
 func NewEventCollector(cfg *config.Config) *EventCollector {
 	var eventPath string
-	switch cfg.Mode {
-	case "test":
-		eventPath = cfg.Test.EventPath
-	default:
-		switch runtime.GOOS {
-		case "linux":
-			eventPath = cfg.Paths.Logs.Linux.Event
-		case "windows":
-			eventPath = cfg.Paths.Logs.Windows.Event
-		case "darwin":
-			eventPath = cfg.Paths.Logs.Mac.Event
-		}
-	}
+	eventPath = platform.DefaultPath(cfg)
+	fmt.Println("-----------------------------------", eventPath)
 
 	c := &EventCollector{
 		eventPath:  eventPath,

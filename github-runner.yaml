@@ -1,37 +1,23 @@
-mode: "prod"  # or "test"
-
 server:
   listen_address: "9200"
 
-paths:
-  logs:
-    linux:
+runners:
+  - name: "gpu-runner"
+    group: "sre-group"
+    enable: true
+    mode: "prod" # or "test"
+    labels: # This will be injected to Exporter
+      environment: "production"
+      region: "us-central1"
+    logs:
       runner: "/home/thinesh40/actions-runner/_diag/"
       worker: "/home/thinesh40/development/go/custom_packages/github-runner-prometheus-exporter/test/active/event.json"
-      # event: "/home/thinesh40/development/go/custom_packages/github-runner-exporter/test-data/main-data/event.json"
       event: "/home/thinesh40/development/go/custom_packages/github-runner-prometheus-exporter/test/active/event.json"
-    # windows:
-    #   runner: "C:\\github-runner\\_diag\\"
-    #   worker: "C:\\github-runner\\_diag\\"
-    #   event: "C:\\_temp\\_github_workflow\\event.json"
-    # mac:
-    #   runner: "/Users/thinesh/actions-runner/_diag/"
-    #   worker: "/Users/thinesh/actions-runner/_diag/"
-    #   event: "/Users/thinesh/actions-runner/_temp/_github_workflow/event.json"
-
-runners:
-  names:
-    - "gpu-runner"
-  groups:
-    - "sre-group"
-
-metrics:
-  enable_runner: false
-  enable_job: false
-  enable_event: true
-
-test:
-  runner_path: "/home/thinesh40/actions-runner/"
-  event_path: "/home/thinesh40/actions-runner/event.json"
-  worker_path: "/home/thinesh40/actions-runner"
-# worker_path: "/home/thinesh40/actions-runner/_diag/Worker_20250508-033738-utc.log"
+    test:
+      runner_path: "/home/thinesh40/actions-runner/"
+      event_path: "/home/thinesh40/actions-runner/event.json"
+      worker_path: "/home/thinesh40/actions-runner"
+    metrics:
+      enable_runner: false
+      enable_job: false
+      enable_event: true

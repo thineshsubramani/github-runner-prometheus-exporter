@@ -7,44 +7,32 @@ import (
 )
 
 type Config struct {
-	Mode string `mapstructure:"mode"` // prod / test
+	Server  Server   `mapstructure:"server"`
+	Runners []Runner `mapstructure:"runners"`
+}
 
-	Server struct {
-		ListenAddress string `mapstructure:"listen_address"`
-	} `mapstructure:"server"`
+type Server struct {
+	ListenAddress string `mapstructure:"listen_address"`
+}
 
-	Paths struct {
-		Logs struct {
-			Linux struct {
-				Worker string `mapstructure:"worker"`
-				Runner string `mapstructure:"runner"`
-				Event  string `mapstructure:"event"`
-			} `mapstructure:"linux"`
+type Runner struct {
+	Name   string            `mapstructure:"name"`
+	Group  string            `mapstructure:"group"`
+	Enable bool              `mapstructure:"enable"`
+	Mode   string            `mapstructure:"mode"` // prod / test
+	Labels map[string]string `mapstructure:"labels"`
 
-			Windows struct {
-				Worker string `mapstructure:"worker"`
-				Runner string `mapstructure:"runner"`
-				Event  string `mapstructure:"event"`
-			} `mapstructure:"windows"`
-
-			Mac struct {
-				Worker string `mapstructure:"worker"`
-				Runner string `mapstructure:"runner"`
-				Event  string `mapstructure:"event"`
-			} `mapstructure:"mac"`
-		} `mapstructure:"logs"`
-	} `mapstructure:"paths"`
+	Logs struct {
+		Runner string `mapstructure:"runner"`
+		Worker string `mapstructure:"worker"`
+		Event  string `mapstructure:"event"`
+	} `mapstructure:"logs"`
 
 	Test struct {
 		RunnerPath string `mapstructure:"runner_path"`
 		EventPath  string `mapstructure:"event_path"`
 		WorkerPath string `mapstructure:"worker_path"`
 	} `mapstructure:"test"`
-
-	Runners struct {
-		Names  []string `mapstructure:"names"`
-		Groups []string `mapstructure:"groups"`
-	} `mapstructure:"runners"`
 
 	Metrics struct {
 		EnableRunner bool `mapstructure:"enable_runner"`
@@ -62,7 +50,7 @@ func Load() (*Config, error) {
 	v.AddConfigPath("/etc/github-runner-exporter/")
 	v.AutomaticEnv()
 
-	// Default fallback values
+	// Defaults
 	v.SetDefault("server.listen_address", ":9200")
 	v.SetDefault("mode", "prod")
 
