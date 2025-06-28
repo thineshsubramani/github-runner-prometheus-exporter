@@ -1,4 +1,4 @@
-// Utilizing File notify for track runner state
+// Utilizing File notify for track runner state by tracking event.json
 package watcher
 
 import (
