@@ -48,12 +48,12 @@ func NewEventCollector(cfg *config.Config) *EventCollector {
 		eventTriggered: prometheus.NewCounterVec(prometheus.CounterOpts{
 			Name: "github_event_triggered_total",
 			Help: "Number of GitHub workflow events triggered",
-		}, []string{"repo", "org", "enterprise", "workflow"}),
+		}, []string{"repo", "org", "workflow"}),
 
 		eventTimestamp: prometheus.NewGaugeVec(prometheus.GaugeOpts{
 			Name: "github_event_triggered_timestamp_seconds",
 			Help: "Unix timestamp of the last GitHub workflow trigger",
-		}, []string{"repo", "org", "enterprise", "workflow"}),
+		}, []string{"repo", "org", "workflow"}),
 
 		runnerState: prometheus.NewGaugeVec(prometheus.GaugeOpts{
 			Name: "github_runner_state",
@@ -86,7 +86,7 @@ func NewEventCollector(cfg *config.Config) *EventCollector {
 				c.lastPush = ""
 				if c.activeLabels != nil {
 					c.eventTriggered.DeleteLabelValues(c.activeLabels...)
-					c.eventTimestamp.DeleteLabelValues(c.activeLabels...)
+					// c.eventTimestamp.DeleteLabelValues(c.activeLabels...)
 					c.activeLabels = nil
 				}
 			}
@@ -112,7 +112,6 @@ func (c *EventCollector) setRunnerState(idle bool) {
 
 func (c *EventCollector) Describe(ch chan<- *prometheus.Desc) {
 	c.eventTriggered.Describe(ch)
-	c.eventTimestamp.Describe(ch)
 	c.runnerState.Describe(ch)
 }
 
@@ -138,10 +137,10 @@ func (c *EventCollector) Collect(ch chan<- prometheus.Metric) {
 	if event.Organization != nil {
 		org = event.Organization.OrgName
 	}
-	ent := ""
-	if event.Enterprise != nil {
-		ent = event.Enterprise.Slug
-	}
+	// ent := ""
+	// if event.Enterprise != nil {
+	// 	ent = event.Enterprise.Slug
+	// }
 	workflow := event.WorkflowName
 
 	// logDir := filepath.Dir(c.eventPath)
@@ -157,11 +156,10 @@ func (c *EventCollector) Collect(ch chan<- prometheus.Metric) {
 	// 	return
 	// }
 
-	labels := []string{repo, org, ent, workflow}
+	labels := []string{repo, org, workflow}
 
 	if event.Repository.PushedAt != c.lastPush {
 		c.eventTriggered.WithLabelValues(labels...).Inc()
-		// c.eventTimestamp.WithLabelValues(labels...).Set(float64(ts.Unix()))
 		c.lastPush = event.Repository.PushedAt
 
 		c.mu.Lock()

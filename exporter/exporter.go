@@ -32,9 +32,9 @@ func New(cfg *config.Config) *Exporter {
 	)
 	// reg.MustRegister(collectors.NewGoCollector())
 
-	wrappedReg.MustRegister(collectors.NewProcessCollector(collectors.ProcessCollectorOpts{}))
+	runnerWrappedReg.MustRegister(collectors.NewProcessCollector(collectors.ProcessCollectorOpts{}))
 	// wrappedReg.MustRegister(collector.NewInfoCollector(cfg))
-	wrappedReg.MustRegister(collector.NewDiskCollector())
+	runnerWrappedReg.MustRegister(collector.NewDiskCollector())
 	// Custom collectors
 	// if cfg.Metrics.EnableRunner {
 	// 	reg.MustRegister(collector.NewRunnerCollector(cfg.Paths.Logs.Linux.Worker)) // OS switch handled later
