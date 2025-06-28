@@ -6,7 +6,6 @@ import (
 	"encoding/json"
 	"log"
 	"os"
-	"time"
 )
 
 // EventInfo holds parsed GitHub event data
@@ -44,13 +43,4 @@ func ReadEventJSON(path string) (*EventInfo, error) {
 	log.Println(string(j))
 
 	return &event, nil
-}
-
-// GetPushedAtUnix returns the pushed_at field as a Unix timestamp
-func (e *EventInfo) GetPushedAtUnix() (int64, error) {
-	t, err := time.Parse(time.RFC3339, e.Repository.PushedAt)
-	if err != nil {
-		return 0, err
-	}
-	return t.Unix(), nil
 }

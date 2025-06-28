@@ -1,3 +1,4 @@
+// Utilizing File notify for track runner state
 package watcher
 
 import (
@@ -13,7 +14,7 @@ func WatchLogDir(dir string, onChange func(path string, event string)) error {
 	if err != nil {
 		return err
 	}
-	log.Printf("🔭 Watcher started on directory: %s", dir)
+	log.Printf("Watcher started on directory: %s", dir)
 
 	err = watcher.Add(dir)
 	if err != nil {
@@ -23,10 +24,10 @@ func WatchLogDir(dir string, onChange func(path string, event string)) error {
 	// Initial state check
 	eventPath := filepath.Join(dir, "event.json")
 	if fileExists(eventPath) {
-		log.Println("🔍 event.json already exists — assuming runner is busy : ", eventPath)
+		log.Println("event.json already exists — assuming runner is busy : ", eventPath)
 		onChange(eventPath, "created")
 	} else {
-		log.Println("💤 No event.json on start — runner idle")
+		log.Println("No event.json on start — runner idle")
 		onChange(eventPath, "deleted")
 	}
 
@@ -34,7 +35,7 @@ func WatchLogDir(dir string, onChange func(path string, event string)) error {
 		select {
 		case event := <-watcher.Events:
 			// Just be verbose for debugging
-			log.Printf("📡 FS Event: %s on %s", event.Op.String(), event.Name)
+			log.Printf("FS Event: %s on %s", event.Op.String(), event.Name)
 
 			if filepath.Base(event.Name) != "event.json" {
 				continue

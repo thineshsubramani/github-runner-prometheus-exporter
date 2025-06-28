@@ -1,7 +1,7 @@
 mode: "prod"  # or "test"
 
 server:
-  listen_address: "9300"
+  listen_address: "9200"
 
 paths:
   logs:

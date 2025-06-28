@@ -1,4 +1,4 @@
-package tracker
+package watcher
 
 import "sync"
 
@@ -25,3 +25,8 @@ func GetRunnerState(name string) (RunnerState, bool) {
 	s, ok := runners[name]
 	return s, ok
 }
+
+// Track proccess state for Runner its child
+// Support multi OS Linux, Window etc
+// Runner Lifecycle tracking by working with event.js file tracking
+// Get Proccess ID
