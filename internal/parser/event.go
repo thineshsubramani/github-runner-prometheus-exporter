@@ -1,5 +1,5 @@
 // This if for parse event.json file in runner directory
-// Disable by default, Enable this in YAML Configuration if needed
+// Used for parse repo name, runner group, and workflow name
 package parser
 
 import (

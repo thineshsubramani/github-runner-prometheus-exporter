@@ -16,7 +16,7 @@ func NewDiskCollector() *DiskCollector {
 		desc: prometheus.NewDesc(
 			"disk_usage_bytes",
 			"Disk usage for key mountpoints and total",
-			[]string{"mount", "type"}, // type: total, used, free, used_percent
+			[]string{"mount", "type"}, // total, used, free, used_percent
 			nil,
 		),
 	}
