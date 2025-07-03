@@ -7,8 +7,7 @@ runners:
     enable: true
     mode: "prod" # or "test"
     labels: # This will be injected to Exporter
-      environment: "production"
-      region: "us-central1"
+      region: "asia"
     logs:
       runner: "/home/thinesh40/actions-runner/_diag/"
       worker: "/home/thinesh40/development/go/custom_packages/github-runner-prometheus-exporter/test/active/event.json"

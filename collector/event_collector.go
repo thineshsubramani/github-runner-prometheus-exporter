@@ -1,7 +1,6 @@
 package collector
 
 import (
-	"fmt"
 	"log"
 	"os"
 	"path/filepath"
@@ -29,7 +28,6 @@ type EventCollector struct {
 func NewEventCollector(cfg *config.Config) *EventCollector {
 	var eventPath string
 	eventPath = platform.DefaultPath(cfg)
-	fmt.Println("-----------------------------------", eventPath)
 
 	c := &EventCollector{
 		eventPath:  eventPath,

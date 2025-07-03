@@ -19,10 +19,19 @@ func New(cfg *config.Config) *Exporter {
 	reg := prometheus.NewRegistry()
 
 	hostname, _ := os.Hostname()
-	wrappedReg := prometheus.WrapRegistererWith(
-		prometheus.Labels{"hostname": hostname, "os": platform.GetOS()},
-		reg,
-	)
+	labels := prometheus.Labels{
+		"hostname": hostname,
+		"os":       platform.GetOS(),
+	}
+
+	// add custom labels from config
+	if cfg.Runners[0].Labels != nil {
+		for k, v := range cfg.Runners[0].Labels {
+			labels[k] = v
+		}
+	}
+
+	wrappedReg := prometheus.WrapRegistererWith(labels, reg)
 
 	runner_name := cfg.Runners[0].Name
 	group_name := cfg.Runners[0].Group
