@@ -1,6 +1,6 @@
 # GitHub Runner Prometheus Exporter
 
-**Work in Progress**: This project is under active development. Some features may be incomplete or subject to change. Please wait for the official release.
+Note* I have discontinued work on this exporter, as the OpenTelemetry (OTEL) agent and SDK offer a simpler and more efficient approach. I plan to publish a detailed write-up and share the code soon.
 
 ## Project Goal
 
